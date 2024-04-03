@@ -322,16 +322,29 @@ class ChasingEnemy(Enemy):
         super().__init__(game, size, color)
 
     def create(self) -> None:
-        pass
+        self.__id = self.canvas.create_oval(0, 0, 0, 0, fill="blue")
 
     def update(self) -> None:
-        pass
+        if self.x < self.game.player.x:
+            self.x += 0.75
+        else:
+            self.x -= 0.75
+        if self.y < self.game.player.y:
+            self.y += 0.75
+        else:
+            self.y -= 0.75
 
     def render(self) -> None:
-        pass
+        self.canvas.coords(self.__id,
+                           self.x - self.size/2,
+                           self.y - self.size/2,
+                           self.x + self.size/2,
+                           self.y + self.size/2)
+        if self.hits_player():
+            self.game.game_over_lose()
 
     def delete(self) -> None:
-        pass
+        self.canvas.delete(self.__id)
 
 
 class FencingEnemy(Enemy):
@@ -378,7 +391,7 @@ class EnemyGenerator:
     @property
     def game(self) -> "TurtleAdventureGame":
         """
-        Get reference to the associated TurtleAnvengerGame instance
+        Get reference to the associated TurtleAdventureGame instance
         """
         return self.__game
 
@@ -405,12 +418,18 @@ class EnemyGenerator:
             enemy.x = random.randint(0, self.__game.screen_width)
             enemy.y = random.randint(0, self.__game.screen_height)
             self.game.add_enemy(enemy)
+        self.amount_of_chasing_enemies = random.randint(5, 10)
+        for _ in range(self.amount_of_chasing_enemies):
+            enemy = ChasingEnemy(self.__game, 15, "blue")
+            enemy.x = random.randint(0, self.__game.screen_width)
+            enemy.y = random.randint(0, self.__game.screen_height)
+            self.game.add_enemy(enemy)
 
     def amount_of_enemies(self) -> int:
         """
         Get the amount of enemies based on the game level
         """
-        return random.randint(1, 50)
+        return random.randint(5, 50)
 
 
 class TurtleAdventureGame(Game):  # pylint: disable=too-many-ancestors
