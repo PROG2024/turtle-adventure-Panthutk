@@ -322,7 +322,7 @@ class ChasingEnemy(Enemy):
         super().__init__(game, size, color)
 
     def create(self) -> None:
-        self.__id = self.canvas.create_oval(0, 0, 0, 0, fill="blue")
+        self.__id = self.canvas.create_oval(0, 0, 0, 0, fill="black")
 
     def update(self) -> None:
         if self.x < self.game.player.x:
@@ -406,13 +406,13 @@ class EnemyGenerator:
         """
         Create a new enemy, possibly based on the game level
         """
-        self.amount_of_demo_enemies = self.amount_of_enemies()
+        self.amount_of_demo_enemies = random.randint(10, 50)
         for _ in range(self.amount_of_demo_enemies):
             enemy = DemoEnemy(self.__game, 20, "red")
             enemy.x = random.randint(0, self.__game.screen_width)
             enemy.y = random.randint(0, self.__game.screen_height)
             self.game.add_enemy(enemy)
-        self.amount_of_random_walk_enemies = self.amount_of_enemies()
+        self.amount_of_random_walk_enemies = random.randint(10, 20)
         for _ in range(self.amount_of_random_walk_enemies):
             enemy = RandomWalkEnemy(self.__game, 20, "yellow")
             enemy.x = random.randint(0, self.__game.screen_width)
@@ -420,16 +420,10 @@ class EnemyGenerator:
             self.game.add_enemy(enemy)
         self.amount_of_chasing_enemies = random.randint(5, 10)
         for _ in range(self.amount_of_chasing_enemies):
-            enemy = ChasingEnemy(self.__game, 15, "blue")
+            enemy = ChasingEnemy(self.__game, 15, "black")
             enemy.x = random.randint(0, self.__game.screen_width)
             enemy.y = random.randint(0, self.__game.screen_height)
             self.game.add_enemy(enemy)
-
-    def amount_of_enemies(self) -> int:
-        """
-        Get the amount of enemies based on the game level
-        """
-        return random.randint(5, 50)
 
 
 class TurtleAdventureGame(Game):  # pylint: disable=too-many-ancestors
