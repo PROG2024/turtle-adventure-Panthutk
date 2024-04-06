@@ -415,6 +415,46 @@ class FencingEnemy(Enemy):
             self.__id = None
 
 
+class StealthEnemy(Enemy):
+    def __init__(self, game: "TurtleAdventureGame", size: int, color: str):
+        super().__init__(game, size, color)
+
+    def create(self) -> None:
+        self.__id = self.canvas.create_oval(0, 0, 0, 0, fill="gray")
+
+    def update(self) -> None:
+
+        dx = self.game.player.x - self.x
+        dy = self.game.player.y - self.y
+
+        magnitude = math.sqrt(dx**2 + dy**2)
+
+        if magnitude != 0:
+            dx /= magnitude
+            dy /= magnitude
+
+        self.x += dx * 1
+        self.y += dy * 1
+
+    def render(self) -> None:
+        distance_to_player = math.sqrt(
+            (self.x - self.game.player.x)**2 + (self.y - self.game.player.y)**2)
+        if distance_to_player <= 50:
+            self.canvas.itemconfig(self.__id, state="normal")
+        else:
+            self.canvas.itemconfig(self.__id, state="hidden")
+
+        self.canvas.coords(self.__id,
+                           self.x - self.size/2,
+                           self.y - self.size/2,
+                           self.x + self.size/2,
+                           self.y + self.size/2)
+        if self.hits_player():
+            self.game.game_over_lose()
+
+    def delete(self) -> None:
+        self.canvas.delete(self.__id)
+
 # TODO
 # Complete the EnemyGenerator class by inserting code to generate enemies
 # based on the given game level; call TurtleAdventureGame's add_enemy() method
@@ -455,7 +495,7 @@ class EnemyGenerator:
         """
         Create a new enemy, possibly based on the game level
         """
-        self.amount_of_demo_enemies = random.randint(10, 50)
+        self.amount_of_demo_enemies = random.randint(10, 20)
         for _ in range(self.amount_of_demo_enemies):
             enemy = DemoEnemy(self.__game, 20, "red")
             enemy.x = random.randint(0, self.__game.screen_width)
@@ -479,7 +519,12 @@ class EnemyGenerator:
             enemy.x = random.randint(0, self.__game.screen_width)
             enemy.y = random.randint(0, self.__game.screen_height)
             self.game.add_enemy(enemy)
-        self.amount_of_sniper_enemies = random.randint(1, 3)
+        self.amount_of_stealth_enemies = random.randint(1, 3)
+        for _ in range(self.amount_of_stealth_enemies):
+            enemy = StealthEnemy(self.__game, 20, "gray")
+            enemy.x = random.randint(0, self.__game.screen_width)
+            enemy.y = random.randint(0, self.__game.screen_height)
+            self.game.add_enemy(enemy)
 
 
 class TurtleAdventureGame(Game):  # pylint: disable=too-many-ancestors
