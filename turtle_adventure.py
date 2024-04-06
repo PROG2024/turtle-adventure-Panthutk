@@ -519,7 +519,7 @@ class EnemyGenerator:
             enemy.x = random.randint(0, self.__game.screen_width)
             enemy.y = random.randint(0, self.__game.screen_height)
             self.game.add_enemy(enemy)
-        self.amount_of_stealth_enemies = random.randint(1, 3)
+        self.amount_of_stealth_enemies = random.randint(3, 6)
         for _ in range(self.amount_of_stealth_enemies):
             enemy = StealthEnemy(self.__game, 20, "gray")
             enemy.x = random.randint(0, self.__game.screen_width)
